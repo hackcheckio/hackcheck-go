@@ -20,3 +20,15 @@ type Response struct {
 	Success bool     `json:"success"`
 	Message string   `json:"message"`
 }
+
+type Field = string
+
+const (
+	FieldEmail    Field = "email"
+	FieldUsername Field = "username"
+	FieldName     Field = "name"
+	FieldPassword Field = "password"
+	FieldIP       Field = "ip"
+	FieldPhone    Field = "phone"
+	FieldDomain   Field = "domain"
+)
