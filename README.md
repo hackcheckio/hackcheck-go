@@ -1,20 +1,26 @@
 # Hackcheck-go
-A go wrapper for [hackcheck.io](https://hackcheck.io)'s API
+
+<p>
+    <a href="https://pkg.go.dev/github.com/hackcheckio/hackcheck-go?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="GoDoc"></a>
+    <a href="https://goreportcard.com/report/github.com/hackcheckio/hackcheck-go"><img alt="Go report", src="https://goreportcard.com/badge/github.com/hackcheckio/hackcheck-go"></a>
+</p>
+
+A go wrapper for [hackcheck.io](https://hackcheck.io)'s public API
+
 
 ## Installation
-```bash
+```sh-session
 go get -u github.com/hackcheckio/hackcheck-go
 ```
 
-## Usage
+## Example usage
 
-You need an API key to utilize the Hackcheck API, which you can get here:
-https://hackcheck.io/profile
-
-NOTE: The API is only available to users with a Developer plan
+Simple email lookup that prints leaked passwords:
 
 ```go
 import (
+    "fmt"
+
 	"github.com/hackcheckio/hackcheck-go"
 )
 
@@ -27,35 +33,17 @@ func main() {
     }
 
     for _, r := range result {
-        fmt.Println(r)
+        fmt.Printf("Password found: '%s'", r.Password)
     }
 }
 ```
 
-## Lookup Methods
+## Lookup methods
 
-```go
-LookupEmail
-LookupUsername
-LookupName
-LookupPassword
-LookupIP
-LookupPhone
-LookupDomain
-```
-
-
-## Result types
-
-```go
-Email    string
-Password string
-Username string
-IP       string
-Phone    string
-Source   struct {
-    Name        string
-    Date        string
-    Description string
-}
-```
+- `LookupEmail()`
+- `LookupUsername()`
+- `LookupName()`
+- `LookupPassword()`
+- `LookupIP()`
+- `LookupPhone()`
+- `LookupDomain()`
