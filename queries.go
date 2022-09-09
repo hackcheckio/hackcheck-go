@@ -9,10 +9,6 @@ import (
 	"strconv"
 )
 
-func (h *Hackcheck) getUrl(q, data string) string {
-	return baseUrl + fmt.Sprintf("%s?key=%v&%s=%s", baseUrl, h.Apikey, q, data)
-}
-
 // LookupEmail preforms an email lookup
 func (h *Hackcheck) LookupEmail(email string) ([]Result, error) {
 	return h.Lookup(FieldEmail, email)
@@ -51,7 +47,14 @@ func (h *Hackcheck) LookupDomain(domain string) ([]Result, error) {
 // Lookup returns all data breaches for the query
 // Does not return an error if there are no data breaches
 func (h *Hackcheck) Lookup(field Field, query string) ([]Result, error) {
-	req, err := http.NewRequest("GET", h.getUrl(field, query), nil)
+	if h.cache != nil {
+		val, ok := h.cache.Get(fmt.Sprintf("%s:%s", field, query))
+		if ok {
+			return val.([]Result), nil
+		}
+	}
+
+	req, err := http.NewRequestWithContext(h.ctx, "GET", h.getUrl(field, query), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -62,14 +65,18 @@ func (h *Hackcheck) Lookup(field Field, query string) ([]Result, error) {
 	}
 
 	if resp.StatusCode == 401 {
-		return nil, ErrInvalidApikey
+		return nil, ErrUnauthorized
 	}
 
 	h.AllowedRatelimit, _ = strconv.Atoi(resp.Header.Get("hc-allowed-rate"))
 	h.CurrentRatelimit, _ = strconv.Atoi(resp.Header.Get("hc-current-rate"))
 
 	defer resp.Body.Close()
-	b, _ := io.ReadAll(resp.Body)
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var r Response
 
@@ -81,5 +88,13 @@ func (h *Hackcheck) Lookup(field Field, query string) ([]Result, error) {
 		return nil, errors.New(r.Message)
 	}
 
+	if h.cache != nil {
+		h.cache.Add(fmt.Sprintf("%s:%s", field, query), r.Results)
+	}
+
 	return r.Results, nil
+}
+
+func (h *Hackcheck) getUrl(q, data string) string {
+	return fmt.Sprintf("%s/%s/%s/%s", baseUrl, h.Apikey, q, data)
 }

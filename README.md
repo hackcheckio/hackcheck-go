@@ -5,7 +5,13 @@
     <a href="https://goreportcard.com/report/github.com/hackcheckio/hackcheck-go"><img alt="Go report", src="https://goreportcard.com/badge/github.com/hackcheckio/hackcheck-go"></a>
 </p>
 
-A go wrapper for [hackcheck.io](https://hackcheck.io)'s public API
+Official go library for the [hackcheck.io](https://hackcheck.io) API
+
+- [Hackcheck-go](#hackcheck-go)
+  - [Installation](#installation)
+  - [Quick start](#quick-start)
+  - [Lookup methods](#lookup-methods)
+  - [Other options](#other-options)
 
 
 ## Installation
@@ -13,7 +19,7 @@ A go wrapper for [hackcheck.io](https://hackcheck.io)'s public API
 go get -u github.com/hackcheckio/hackcheck-go
 ```
 
-## Example usage
+## Quick start
 
 Simple email lookup that prints leaked passwords:
 
@@ -25,7 +31,8 @@ import (
 )
 
 func main() {
-    hc := hackcheck.New("your hackcheck api key")
+    // Get an api key by purchasing a developer plan https://hackcheck.io/plans
+    hc := hackcheck.New("MY_API_KEY")
 
     result, err := hc.LookupEmail("your@email.com")
     if err != nil {
@@ -33,8 +40,18 @@ func main() {
     }
 
     for _, r := range result {
-        fmt.Printf("Password found: '%s'", r.Password)
+        fmt.Println("Database:", r.Source.Name)
+        fmt.Println("Date:", r.Source.Date)
+        fmt.Println("Password:", r.Password)
+        fmt.Println("Username:", r.Username)
+        fmt.Println("IP:", r.IP)
+        fmt.Println("-------")
     }
+    fmt.Println()
+
+    // Check your ratelimits
+	fmt.Println("Current rate limit:", hc.CurrentRatelimit)
+	fmt.Println("Allowed rate limit:", hc.AllowedRatelimit)
 }
 ```
 
@@ -47,3 +64,17 @@ func main() {
 - `LookupIP()`
 - `LookupPhone()`
 - `LookupDomain()`
+
+## Other options
+
+```go
+// Using with cache
+// 10 represents the cache size
+hackcheck.New("MY_API_KEY", hackcheck.WithCache(10))
+
+// With custom http client
+hackcheck.New("MY_API_KEY", hackcheck.WithHttp(&http.Client{...}))
+
+// With context
+hackcheck.New("MY_API_KEY", hackcheck.WithContext(context.Background()))
+```
