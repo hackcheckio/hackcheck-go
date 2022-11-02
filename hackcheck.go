@@ -13,6 +13,7 @@ type Hackcheck struct {
 	Apikey           string
 	CurrentRatelimit int
 	AllowedRatelimit int
+	limit            int
 	ctx              context.Context
 	http             *http.Client
 	cache            *lru.Cache
@@ -55,5 +56,13 @@ func WithCache(size int) func(hc *Hackcheck) {
 	return func(hc *Hackcheck) {
 		cache, _ := lru.New(size)
 		hc.cache = cache
+	}
+}
+
+// WithLimit will set the Hackcheck result limit
+// Should not be used, since its not fully implemented yet.
+func WithLimit(limit int) func(hc *Hackcheck) {
+	return func(hc *Hackcheck) {
+		hc.limit = limit
 	}
 }

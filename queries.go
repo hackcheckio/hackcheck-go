@@ -96,5 +96,9 @@ func (h *Hackcheck) Lookup(field Field, query string) ([]Result, error) {
 }
 
 func (h *Hackcheck) getUrl(q, data string) string {
-	return fmt.Sprintf("%s/%s/%s/%s", baseUrl, h.Apikey, q, data)
+	url := fmt.Sprintf("%s/%s/%s/%s", baseUrl, h.Apikey, q, data)
+	if h.limit > 0 {
+		url += fmt.Sprintf("?limit=%d", h.limit)
+	}
+	return url
 }
