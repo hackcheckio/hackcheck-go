@@ -4,6 +4,7 @@ type Result struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Username string `json:"username"`
+	Name	 string `json:"name"`
 	IP       string `json:"ip"`
 	Phone    string `json:"phone"`
 	Source   struct {
