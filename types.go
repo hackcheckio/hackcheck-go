@@ -17,12 +17,14 @@ type SearchResult struct {
 
 // External use
 type SearchResponse struct {
+	Databases  int                       `json:"databases"`
 	Results    []SearchResult            `json:"results"`
 	Pagination *SearchResponsePagination `json:"pagination"`
 }
 
 // Internal use
 type searchResponse struct {
+	Databases  int                       `json:"databases"`
 	Found      int                       `json:"found"`
 	Elapsed    string                    `json:"elapsed"`
 	Error      string                    `json:"error"`
