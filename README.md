@@ -25,27 +25,27 @@ Example usage
 
 ```go
 import (
-    "fmt"
+	"fmt"
 
 	"github.com/hackcheckio/hackcheck-go"
 )
 
 func main() {
-    hc := hackcheck.New("MY_API_KEY")
+	hc := hackcheck.New("MY_API_KEY")
 
-    resp, err := hc.Search(
-        &SearchOptions{
-            Field: hackcheck.SearchFieldEmail,
-            Query: "example@example.com",
-        },
-    )
+	resp, err := hc.Search(
+		&SearchOptions{
+			Field: hackcheck.SearchFieldEmail,
+			Query: "example@example.com",
+		},
+	)
 
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-    fmt.Println(resp.Results)
+	fmt.Println(resp.Results)
 }
 ```
 
