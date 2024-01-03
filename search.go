@@ -60,7 +60,7 @@ func (h *HackCheckClient) Search(options *SearchOptions) (*SearchResponse, error
 		return nil, ErrServerError
 	}
 
-	return &SearchResponse{Results: r.Results, Pagination: r.Pagination}, nil
+	return &SearchResponse{Results: r.Results, Pagination: r.Pagination, Databases: r.Databases}, nil
 }
 
 func (h *HackCheckClient) getUrl(options *SearchOptions) string {
