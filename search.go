@@ -56,6 +56,8 @@ func (h *HackCheckClient) Search(options *SearchOptions) (*SearchResponse, error
 
 			return nil, newRateLimitError(limit, remaining, "rate limit reached")
 		}
+
+		return nil, ErrServerError
 	}
 
 	return &SearchResponse{Results: r.Results, Pagination: r.Pagination}, nil
