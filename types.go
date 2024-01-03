@@ -9,9 +9,8 @@ type SearchResult struct {
 	PhoneNumber string `json:"phone_number"`
 	Hash        string `json:"hash"`
 	Source      struct {
-		Name        string `json:"name"`
-		Date        string `json:"date"`
-		Description string `json:"description"`
+		Name string `json:"name"`
+		Date string `json:"date"`
 	} `json:"source"`
 }
 
