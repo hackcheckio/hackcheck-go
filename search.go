@@ -2,69 +2,122 @@ package hackcheck
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 )
 
-const searchUrl string = "https://api.hackcheck.io/search"
-
-func (h *HackCheckClient) Search(options *SearchOptions) (*SearchResponse, error) {
-	req, err := http.NewRequestWithContext(h.ctx, "GET", h.getUrl(options), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := h.http.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var r searchResponse
-
-	if err := json.Unmarshal(b, &r); err != nil {
-		return nil, ErrServerError
-	}
-
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			switch r.Error {
-			case "Invalid API key.":
-				return nil, ErrInvalidAPIKey
-			case "Unauthorized IP address.":
-				return nil, ErrUnauthorizedIPAddress
-			}
-		}
-
-		if resp.StatusCode == 429 {
-			limit, lerr := strconv.Atoi(resp.Header.Get("X-HackCheck-Limit"))
-			remaining, rerr := strconv.Atoi(resp.Header.Get("X-HackCheck-Remaining"))
-
-			if lerr != nil || rerr != nil {
-				return nil, ErrServerError
-			}
-
-			return nil, newRateLimitError(limit, remaining, "rate limit reached")
-		}
-
-		return nil, ErrServerError
-	}
-
-	return &SearchResponse{Results: r.Results, Pagination: r.Pagination, Databases: r.Databases}, nil
+type Source struct {
+	Name string `json:"name"`
+	Date string `json:"date"`
 }
 
-func (h *HackCheckClient) getUrl(options *SearchOptions) string {
-	thyUrl := fmt.Sprintf("%s/%s/%s/%s", searchUrl, h.Apikey, options.Field, options.Query)
+type SearchResult struct {
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	Username    string `json:"username"`
+	FullName    string `json:"full_name"`
+	IPAddress   string `json:"ip_address"`
+	PhoneNumber string `json:"phone_number"`
+	Hash        string `json:"hash"`
+	Source      Source `json:"source"`
+}
+
+type SearchResponse struct {
+	Databases  int                       `json:"databases"`
+	Results    []SearchResult            `json:"results"`
+	Pagination *SearchResponsePagination `json:"pagination"`
+}
+
+type CheckResponse struct {
+	Found bool `json:"found"`
+}
+
+type SearchResponsePagination struct {
+	DocumentCount int `json:"document_count"`
+	Next          *struct {
+		Offset int `json:"offset"`
+		Limit  int `json:"limit"`
+	} `json:"next"`
+	Prev *struct {
+		Offset int `json:"offset"`
+		Limit  int `json:"limit"`
+	} `json:"prev"`
+}
+
+type SearchFilterType = string
+
+const (
+	SearchFilterTypeUse    = "use"
+	SearchFilterTypeIgnore = "ignore"
+)
+
+type SearchFilterOptions struct {
+	Type      SearchFilterType
+	Databases []string
+}
+
+type SearchPaginationOptions struct {
+	Offset int
+	Limit  int
+}
+
+type SearchOptions struct {
+	Field      SearchField
+	Query      string
+	Filter     *SearchFilterOptions
+	Pagination *SearchPaginationOptions
+}
+
+type CheckOptions struct {
+	Field SearchField
+	Query string
+}
+
+type SearchField = string
+
+const (
+	SearchFieldEmail       SearchField = "email"
+	SearchFieldUsername    SearchField = "username"
+	SearchFieldFullName    SearchField = "full_name"
+	SearchFieldPassword    SearchField = "password"
+	SearchFieldIPAddress   SearchField = "ip_address"
+	SearchFieldPhoneNumber SearchField = "phone_number"
+	SearchFieldDomain      SearchField = "domain"
+	SearchFieldHash        SearchField = "hash"
+)
+
+func (h *HackCheckClient) Search(options *SearchOptions) (*SearchResponse, error) {
+	resp, err := h.request(http.MethodGet, h.getSearchUrl(options), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var r SearchResponse
+	if err := json.Unmarshal(resp, &r); err != nil {
+		return nil, err
+	}
+
+	return &r, nil
+}
+
+func (h *HackCheckClient) Check(options *CheckOptions) (bool, error) {
+	resp, err := h.request(http.MethodGet, EndpointCheck(h.Apikey, options.Field, options.Query), nil)
+	if err != nil {
+		return false, err
+	}
+
+	var r CheckResponse
+	if err := json.Unmarshal(resp, &r); err != nil {
+		return false, err
+	}
+
+	return r.Found, nil
+}
+
+func (h *HackCheckClient) getSearchUrl(options *SearchOptions) string {
+	thyUrl := EndpointSearch(h.Apikey, options.Field, options.Query)
 
 	query := url.Values{}
 

@@ -25,6 +25,43 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// just basic testing...
+func TestHackcheckClient_Monitors(t *testing.T) {
+	resp, err := client.GetMonitors()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.AssetMonitors) != 1 && len(resp.DomainMonitors) != 1 {
+		t.Fatal("no asset / domain monitors")
+	}
+
+	firsta, err := client.GetAssetMonitor(resp.AssetMonitors[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	firstd, err := client.GetDomainMonitor(resp.DomainMonitors[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if firsta.Asset == "" || firstd.Domain == "" {
+		t.Fatal("empty response")
+	}
+}
+
+func TestHackCheckClient_Check(t *testing.T) {
+	resp, err := client.Check(&CheckOptions{Field: SearchFieldEmail, Query: "hello@gmail.com"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp == false {
+		t.Fatal("check returned false")
+	}
+}
+
 func TestHackCheckClient_Search(t *testing.T) {
 	searchQueries := [][]string{
 		{SearchFieldDomain, "example.com"},
