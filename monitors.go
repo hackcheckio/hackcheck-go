@@ -159,7 +159,7 @@ func (h *HackCheckClient) UpdateDomainMonitor(monitorID string, updateParams *Up
 }
 
 func (h *HackCheckClient) TogglePauseAssetMonitor(monitorID string) (*AssetMonitor, error) {
-	resp, err := h.request(http.MethodGet, EndpointTogglePauseAssetMonitor(h.Apikey, monitorID), nil)
+	resp, err := h.request(http.MethodPost, EndpointTogglePauseAssetMonitor(h.Apikey, monitorID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (h *HackCheckClient) TogglePauseAssetMonitor(monitorID string) (*AssetMonit
 }
 
 func (h *HackCheckClient) TogglePauseDomainMonitor(monitorID string) (*DomainMonitor, error) {
-	resp, err := h.request(http.MethodGet, EndpointTogglePauseDomainMonitor(h.Apikey, monitorID), nil)
+	resp, err := h.request(http.MethodPost, EndpointTogglePauseDomainMonitor(h.Apikey, monitorID), nil)
 	if err != nil {
 		return nil, err
 	}
