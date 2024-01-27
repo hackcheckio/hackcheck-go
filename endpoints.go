@@ -25,16 +25,16 @@ var (
 	}
 
 	EndpointUpdateAssetMonitor = func(apiKey, monitorID string) string {
-		return EndpointBase + "monitors/" + apiKey + "/update-asset/" + monitorID
+		return EndpointBase + "monitors/" + apiKey + "/update/asset/" + monitorID
 	}
 	EndpointUpdateDomainMonitor = func(apiKey, monitorID string) string {
-		return EndpointBase + "monitors/" + apiKey + "/update-domain/" + monitorID
+		return EndpointBase + "monitors/" + apiKey + "/update/domain/" + monitorID
 	}
 
 	EndpointTogglePauseAssetMonitor = func(apiKey, monitorID string) string {
-		return EndpointBase + "monitors/" + apiKey + "/pause-asset/" + monitorID
+		return EndpointBase + "monitors/" + apiKey + "/pause/asset/" + monitorID
 	}
 	EndpointTogglePauseDomainMonitor = func(apiKey, monitorID string) string {
-		return EndpointBase + "monitors/" + apiKey + "/pause-domain/" + monitorID
+		return EndpointBase + "monitors/" + apiKey + "/pause/domain/" + monitorID
 	}
 )
