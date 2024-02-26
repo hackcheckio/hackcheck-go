@@ -13,8 +13,11 @@ var (
 	EndpointGetMonitors = func(apiKey string) string {
 		return EndpointBase + "monitors/" + apiKey + "/list"
 	}
-	EndpointGetMonitor = func(apiKey, monitorID string) string {
-		return EndpointBase + "monitors/" + apiKey + "/list/" + monitorID
+	EndpointGetAssetMonitor = func(apiKey, monitorID string) string {
+		return EndpointBase + "monitors/" + apiKey + "/list/asset/" + monitorID
+	}
+	EndpointGetDomainMonitor = func(apiKey, monitorID string) string {
+		return EndpointBase + "monitors/" + apiKey + "/list/domain/" + monitorID
 	}
 
 	EndpointGetAssetMonitorSources = func(apiKey, monitorID string) string {
