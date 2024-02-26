@@ -66,7 +66,7 @@ func (h *HackCheckClient) GetMonitors() (*GetMonitorsResponse, error) {
 }
 
 func (h *HackCheckClient) GetAssetMonitor(monitorID string) (*AssetMonitor, error) {
-	resp, err := h.request(http.MethodGet, EndpointGetMonitor(h.Apikey, monitorID), nil)
+	resp, err := h.request(http.MethodGet, EndpointGetAssetMonitor(h.Apikey, monitorID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (h *HackCheckClient) GetAssetMonitor(monitorID string) (*AssetMonitor, erro
 }
 
 func (h *HackCheckClient) GetDomainMonitor(monitorID string) (*DomainMonitor, error) {
-	resp, err := h.request(http.MethodGet, EndpointGetMonitor(h.Apikey, monitorID), nil)
+	resp, err := h.request(http.MethodGet, EndpointGetDomainMonitor(h.Apikey, monitorID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (h *HackCheckClient) UpdateAssetMonitor(monitorID string, updateParams *Upd
 		return nil, err
 	}
 
-	resp, err := h.request(http.MethodPost, EndpointUpdateAssetMonitor(h.Apikey, monitorID), data)
+	resp, err := h.request(http.MethodPut, EndpointUpdateAssetMonitor(h.Apikey, monitorID), data)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func (h *HackCheckClient) UpdateDomainMonitor(monitorID string, updateParams *Up
 		return nil, err
 	}
 
-	resp, err := h.request(http.MethodPost, EndpointUpdateDomainMonitor(h.Apikey, monitorID), data)
+	resp, err := h.request(http.MethodPut, EndpointUpdateDomainMonitor(h.Apikey, monitorID), data)
 	if err != nil {
 		return nil, err
 	}
