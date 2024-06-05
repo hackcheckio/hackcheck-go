@@ -26,6 +26,8 @@ type SearchResult struct {
 
 type SearchResponse struct {
 	Databases  int                       `json:"databases"`
+	FirstSeen  string                    `json:"first_seen"`
+	LastSeen   string                    `json:"last_seen"`
 	Results    []SearchResult            `json:"results"`
 	Pagination *SearchResponsePagination `json:"pagination"`
 }
