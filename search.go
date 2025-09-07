@@ -14,14 +14,16 @@ type Source struct {
 }
 
 type SearchResult struct {
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	Username    string `json:"username"`
-	FullName    string `json:"full_name"`
-	IPAddress   string `json:"ip_address"`
-	PhoneNumber string `json:"phone_number"`
-	Hash        string `json:"hash"`
-	Source      Source `json:"source"`
+	Email           string            `json:"email"`
+	Password        string            `json:"password"`
+	Username        string            `json:"username"`
+	FullName        string            `json:"full_name"`
+	IPAddress       string            `json:"ip_address"`
+	PhoneNumber     string            `json:"phone_number"`
+	Hash            string            `json:"hash"`
+	OtherFields     map[string]string `json:"other_fields"`
+	SensitiveFields map[string]string `json:"sensitive_fields"`
+	Source          Source            `json:"source"`
 }
 
 type SearchResponse struct {
